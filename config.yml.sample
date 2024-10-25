@@ -1,0 +1,16 @@
+mysql:
+  charset: utf8
+  db: go_web
+  host: localhost
+  password: password
+  user: root
+
+mail:
+  smtp: smtp.126.com
+  smtp-port: 465
+  user: xty2537012722@126.com
+  password: SFtBfmxbCPY8EMt3
+
+
+server:
+  url: http://127.0.0.1:8888

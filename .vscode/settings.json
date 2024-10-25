@@ -1,0 +1,5 @@
+{
+    "go.goroot": "/usr/lib/go",  // Go 的根目录
+    "go.gopath": "/home/xuty/go", // 设置你的 GOPATH
+    "go.useLanguageServer": true   // 使用语言服务器
+}
