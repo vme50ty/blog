@@ -3,6 +3,7 @@ package controller
 import (
 	"html/template"
 
+	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 )
 
@@ -29,6 +30,6 @@ func init() {
 }
 
 // Startup func
-func Startup() {
-	homeController.registerRoutes()
+func Startup() *mux.Router {
+	return homeController.registerRoutes()
 }

@@ -1,0 +1,54 @@
+{{define "content"}}
+    <div class="container">
+        <!-- 主帖内容 -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="media">
+                    <img src="{{.Post.User.Avatar}}&s=48" class="mr-3 rounded-circle" alt="...">
+                    <div class="media-body">
+                        <h5 class="mt-0">
+                            <a href="/user/{{.Post.User.Username}}">{{.Post.User.Username}}</a>
+                            <small class="text-muted">{{.Post.FormattedTimeAgo}}</small>
+                        </h5>
+                        <p class="mb-0">{{.Post.Body}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 评论表单 -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form action="/post/{{.Post.ID}}/comment" method="post">
+                    <div class="form-group">
+                        <textarea name="body" class="form-control" rows="3" 
+                                  placeholder="写下你的评论..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">提交评论</button>
+                    
+                    {{if .Flash}}
+                        <span class="text-danger ml-3">{{.Flash}}</span>
+                    {{end}}
+                </form>
+            </div>
+        </div>
+
+        <!-- 评论列表 -->
+        {{range .Comments}}
+        <div class="card mb-2">
+            <div class="card-body py-2">
+                <div class="media">
+                    <img src="{{.User.Avatar}}&s=36" class="mr-3 rounded-circle" alt="...">
+                    <div class="media-body">
+                        <h6 class="mt-0 mb-1">
+                            <a href="/user/{{.User.Username}}">{{.User.Username}}</a>
+                            <small class="text-muted">{{.FormattedTimeAgo}}</small>
+                        </h6>
+                        <p class="mb-0">{{.Body}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{end}}
+    </div>
+{{end}}

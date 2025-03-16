@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 
 	"go-web/vm"
 
@@ -16,7 +17,7 @@ type home struct{}
 
 //home 类型的变量，可以理解为一个控制器，用于处理与首页相关的逻辑和路由。
 
-func (h home) registerRoutes() {
+func (h home) registerRoutes() *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/logout", middleAuth(logoutHandler))
 	r.HandleFunc("/login", loginHandler)
@@ -31,10 +32,48 @@ func (h home) registerRoutes() {
 	r.HandleFunc("/reset_password/{token}", resetPasswordHandler)
 	r.HandleFunc("/user/{username}/popup", popupHandler)
 
+	r.HandleFunc("/post/{postid}", middleAuth(postHandler))
+	r.HandleFunc("/post/{postid}/comment", middleAuth(createCommentHandler))
+
 	r.NotFoundHandler = http.HandlerFunc(notfoundHandler)
 	r.HandleFunc("/404", notfoundHandler)
 
-	http.Handle("/", r)
+	return r
+}
+
+// PostDetailHandler 处理帖子详情页
+func postHandler(w http.ResponseWriter, r *http.Request) {
+	tpname := "post.html"
+	postID := mux.Vars(r)["postid"]
+	username, _ := getSessionUser(r)
+	flash := getFlash(w, r)
+
+	vmop := vm.PostViewModelOp{}
+	vm, err := vmop.GetVM(username, flash, postID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	templates[tpname].Execute(w, &vm)
+}
+
+// CreateCommentHandler 处理评论提交
+func createCommentHandler(w http.ResponseWriter, r *http.Request) {
+	postID := mux.Vars(r)["postid"]
+	fmt.Printf("postID=%s\n", postID)
+	pid, _ := strconv.Atoi(postID)
+	fmt.Printf("pid=%d\n", pid)
+	username, _ := getSessionUser(r)
+	body := r.FormValue("body")
+
+	vmop := vm.PostViewModelOp{}
+	if err := vmop.CreateComment(username, body, pid); err != nil {
+		fmt.Print(err)
+		setFlash(w, r, "评论提交失败")
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/post/%d", pid), http.StatusSeeOther)
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {

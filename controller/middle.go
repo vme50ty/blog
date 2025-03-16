@@ -17,6 +17,7 @@ func middleAuth(next http.HandlerFunc) http.HandlerFunc {
 		}
 		if err != nil || err2 != nil {
 			log.Println("middle get session err and redirect to login")
+			// log.Println("err:", err, "err2:", err2)
 			http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
 		} else {
 			next.ServeHTTP(w, r)

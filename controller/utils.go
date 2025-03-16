@@ -13,6 +13,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+
 	"gopkg.in/gomail.v2"
 )
 
@@ -76,6 +77,15 @@ func setSessionUser(w http.ResponseWriter, r *http.Request, username string) err
 		return err
 	}
 	session.Values["user"] = username
+
+	// 解决跨域问题
+	// session.Options = &sessions.Options{
+	// 	Path:     "/",
+	// 	Domain:   "172.25.164.190", // 设置为你的 IP 地址
+	// 	HttpOnly: true,
+	// 	Secure:   false, // 确保在非 HTTPS 的情况下设置为 false
+	// }
+
 	err = session.Save(r, w)
 	//将会话 ID 存入 Cookie 并发送给客户端。Save 方法会把会话中的键值对持久化，客户端下次发起请求时，服务器可以通过 Cookie 中的会话 ID 再次访问该用户的会话数据。
 	if err != nil {

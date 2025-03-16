@@ -156,6 +156,15 @@ func (u *User) CreatePost(body string) error {
 	return db.Create(&post).Error
 }
 
+func (u *User) CreateComment(body string, postID int) error {
+	comment := Comment{
+		PostID: postID,
+		UserID: u.ID,
+		Body:   body,
+	}
+	return db.Create(&comment).Error
+}
+
 // FollowingPostsByPageAndLimit func
 func (u *User) FollowingPostsByPageAndLimit(page, limit int) (*[]Post, int, error) {
 	var total int
@@ -215,11 +224,4 @@ func GetUserByEmail(email string) (*User, error) {
 func UpdatePassword(username, password string) error {
 	contents := map[string]interface{}{"password_hash": Md5(password)}
 	return UpdateUserByUsername(username, contents)
-}
-
-func (u *User) FormattedLastSeen() string {
-    // 加载北京时区
-    location, _ := time.LoadLocation("Asia/Shanghai")
-    // 将LastSeen转换为北京时间
-    return u.LastSeen.In(location).Format("2006-01-02 15:04:05")
 }
